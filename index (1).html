@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoldrFlow — Professional File Organization</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F7F5F0; font-family: 'DM Sans', sans-serif; }
+    .page { min-height: 100vh; padding: 48px 16px 80px; display: flex; flex-direction: column; align-items: center; }
+    .header { text-align: center; max-width: 620px; margin-bottom: 8px; }
+    .logo { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 900; color: #0F172A; margin: 8px 0 12px; letter-spacing: -1px; }
+    .tagline { font-size: 18px; font-weight: 500; color: #1E293B; margin-bottom: 10px; }
+    .sub { font-size: 14px; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+    .trust { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+    .trust span { font-size: 13px; color: #334155; }
+    .trust .check { color: #16A34A; font-weight: 700; }
+    .divider { width: 100%; max-width: 700px; height: 1px; background: #E2E8F0; margin: 28px 0; }
+    .card { background: #fff; border-radius: 16px; padding: 36px 40px; max-width: 700px; width: 100%; box-shadow: 0 4px 32px rgba(0,0,0,0.07); }
+    .section { margin-bottom: 28px; }
+    label { display: block; font-weight: 600; font-size: 14px; color: #0F172A; margin-bottom: 12px; }
+    .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .tier { border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 14px 12px; cursor: pointer; background: #FAFAFA; transition: all 0.15s; }
+    .tier.active { border: 2px solid #2563EB; background: #EFF6FF; }
+    .tier-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tier.active .radio { border-color: #2563EB; }
+    .radio-dot { width: 8px; height: 8px; border-radius: 50%; background: #2563EB; display: none; }
+    .tier.active .radio-dot { display: block; }
+    .tier-name { font-size: 13px; font-weight: 600; color: #0F172A; }
+    .tier-price { font-size: 22px; font-weight: 700; color: #0F172A; margin-bottom: 8px; font-family: 'Playfair Display', serif; }
+    .tier-divider { height: 1px; background: #E2E8F0; margin-bottom: 8px; }
+    .tier-range { font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 500; }
+    .tier-tagline { font-size: 11px; color: #94A3B8; font-style: italic; }
+    input[type=text], input[type=email], input[type=url] { width: 100%; padding: 11px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 14px; color: #0F172A; background: #FAFAFA; outline: none; font-family: 'DM Sans', sans-serif; }
+    textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 14px; color: #0F172A; background: #FAFAFA; outline: none; resize: vertical; font-family: 'DM Sans', sans-serif; }
+    .hint { font-size: 12px; color: #94A3B8; margin-top: 6px; }
+    .row { display: flex; gap: 12px; }
+    .row input { flex: 1; }
+    .payment-box { display: flex; gap: 10px; align-items: center; background: #FAFAFA; border: 1.5px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; }
+    .pay-input { flex: 1; border: none; background: transparent; font-size: 14px; color: #94A3B8; outline: none; }
+    .pay-sm { width: 70px; border: none; background: transparent; font-size: 14px; color: #94A3B8; outline: none; }
+    .cta { width: 100%; padding: 16px; background: #2563EB; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 12px; }
+    .cta:hover { background: #1D4ED8; }
+    .stripe-note { text-align: center; font-size: 13px; color: #94A3B8; }
+    .footer { margin-top: 40px; text-align: center; max-width: 700px; width: 100%; }
+    .footer p { font-size: 12px; color: #94A3B8; margin-bottom: 8px; }
+    .footer-links { display: flex; justify-content: center; align-items: center; gap: 10px; }
+    .footer-links a { font-size: 12px; color: #64748B; text-decoration: none; border-bottom: 1px solid #CBD5E1; padding-bottom: 1px; }
+    .footer-links span { font-size: 12px; color: #CBD5E1; }
+    .success { min-height: 100vh; background: #F7F5F0; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+    .success-card { background: #fff; border-radius: 16px; padding: 60px 40px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 4px 32px rgba(0,0,0,0.07); }
+    .success-icon { font-size: 40px; color: #2563EB; margin-bottom: 16px; }
+    .success-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; color: #0F172A; margin-bottom: 12px; }
+    .success-text { font-size: 16px; color: #334155; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: #64748B; line-height: 1.6; margin-bottom: 24px; }
+    .success-badge { display: inline-block; background: #EFF6FF; border: 1.5px solid #BFDBFE; border-radius: 8px; padding: 8px 16px; font-size: 13px; color: #2563EB; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+  const tiers = [
+    { id: "starter", name: "Starter", price: "$125", range: "0–100 files", tagline: "Perfect for small cleanups" },
+    { id: "starter-plus", name: "Starter Plus", price: "$300", range: "101–300 files", tagline: "Ideal for growing folders" },
+    { id: "professional", name: "Professional", price: "$650", range: "301–1,000 files", tagline: "Best for active businesses" },
+    { id: "enterprise", name: "Enterprise", price: "$1,200", range: "1,001–3,000 files", tagline: "For large digital libraries" },
+  ];
+
+  let state = { selected: "starter", folderLink: "", notes: "", name: "", email: "", submitted: false };
+
+  function setState(updates) {
+    state = { ...state, ...updates };
+    render();
+  }
+
+  function render() {
+    const tier = tiers.find(t => t.id === state.selected);
+
+    if (state.submitted) {
+      document.getElementById("app").innerHTML = `
+        <div class="success">
+          <div class="success-card">
+            <div class="success-icon">✦</div>
+            <h2 class="success-title">Order Confirmed!</h2>
+            <p class="success-text">Thank you, <strong>${state.name}</strong>. We've received your <strong>${tier.name}</strong> order.</p>
+            <p class="success-sub">A confirmation has been sent to <strong>${state.email}</strong>.<br/>You'll receive another email once your files are ready.</p>
+            <div class="success-badge">${tier.name} · ${tier.price} · ${tier.range}</div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    document.getElementById("app").innerHTML = `
+      <div class="page">
+        <div class="header">
+          <div style="font-size:28px;color:#2563EB;">✦</div>
+          <h1 class="logo">FoldrFlow</h1>
+          <p class="tagline">Professional, human-powered file organization.</p>
+          <p class="sub">Share your folder link, tell us how you want things organized,<br/>and we'll handle the rest — no accounts required.</p>
+          <div class="trust">
+            <span><span class="check">✓</span> All file types supported</span>
+            <span><span class="check">✓</span> Handled by a real person</span>
+            <span><span class="check">✓</span> Secure and private</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card">
+          <div class="section">
+            <label>Select your organization plan:</label>
+            <div class="tier-grid">
+              ${tiers.map(t => `
+                <div class="tier ${state.selected === t.id ? 'active' : ''}" onclick="selectTier('${t.id}')">
+                  <div class="tier-top">
+                    <div class="radio"><div class="radio-dot"></div></div>
+                    <span class="tier-name">${t.name}</span>
+                  </div>
+                  <div class="tier-price">${t.price}</div>
+                  <div class="tier-divider"></div>
+                  <div class="tier-range">${t.range}</div>
+                  <div class="tier-tagline">${t.tagline}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+
+          <div class="section">
+            <label>Paste your folder link:</label>
+            <input type="url" id="folderLink" placeholder="Google Drive or Dropbox shared folder link" value="${state.folderLink}" oninput="setState({folderLink: this.value})"/>
+            <p class="hint">We'll organize directly in your cloud storage — your files never leave your drive.</p>
+          </div>
+
+          <div class="section">
+            <label>Notes / Instructions:</label>
+            <textarea id="notes" rows="4" placeholder="Tell us how you'd like your files organized..." oninput="setState({notes: this.value})">${state.notes}</textarea>
+            <p class="hint">Folder structure, naming preferences, any special instructions</p>
+          </div>
+
+          <div class="section">
+            <label>Your Details:</label>
+            <div class="row">
+              <input type="text" placeholder="Full Name" value="${state.name}" oninput="setState({name: this.value})"/>
+              <input type="email" placeholder="Email Address" value="${state.email}" oninput="setState({email: this.value})"/>
+            </div>
+          </div>
+
+          <div class="section">
+            <label>Payment Information:</label>
+            <div class="payment-box">
+              <span>💳</span>
+              <input class="pay-input" placeholder="Card number" disabled/>
+              <input class="pay-sm" placeholder="MM / YY" disabled/>
+              <input class="pay-sm" placeholder="CVC" disabled/>
+            </div>
+            <p class="hint">Payment processing via Stripe (coming soon)</p>
+          </div>
+
+          <button class="cta" onclick="handleSubmit()" style="opacity:${(!state.folderLink||!state.name||!state.email)?0.5:1}">
+            Complete Order · ${tier.price}
+          </button>
+          <p class="stripe-note">🔒 Secure checkout powered by <strong>Stripe</strong></p>
+        </div>
+
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} FoldrFlow. All rights reserved.</p>
+          <div class="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <span>·</span>
+            <a href="#terms">Terms of Use</a>
+            <span>·</span>
+            <a href="#faq">FAQ</a>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function selectTier(id) { setState({ selected: id }); }
+
+  function handleSubmit() {
+    if (!state.folderLink || !state.name || !state.email) return;
+    setState({ submitted: true });
+  }
+
+  render();
+</script>
+</body>
+</html>
